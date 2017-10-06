@@ -6,6 +6,12 @@ predictionsFolder_Dilated = fullfile('sampleData', 'predictions_Dilated');
 predictionsFolder_FCN = fullfile('sampleData', 'predictions_FCN');
 segmentedFolder_FCN = fullfile('sampleData', 'segmented_FCN');
 
+classes = csvread('objectInfo150.csv', 1, 0);
+label = csvread('objectInfo150.csv', 1, 5);
+
+display(classes);
+display(label);
+
 images = dir(fullfile(imagesFolder, '*.jpg'));
 for f = 1: numel(imagesFolder)
     
