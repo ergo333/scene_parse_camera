@@ -4,16 +4,41 @@
 imagesFolder = fullfile('sampleData', 'images');
 predictionsFolder_Dilated = fullfile('sampleData', 'predictions_Dilated');
 predictionsFolder_FCN = fullfile('sampleData', 'predictions_FCN');
+mkdir sampleData segmented_FCN;
 segmentedFolder_FCN = fullfile('sampleData', 'segmented_FCN');
 
-classes = csvread('objectInfo150.csv', 1, 0);
-label = csvread('objectInfo150.csv', 1, 5);
+%% Creo le cartelle che contengono gli oggetti suddivisi per classe
 
-display(classes);
-display(label);
+classesFID = fopen('objectInfo150.txt');
+line = fgetl(classesFID);
+line = fgetl(classesFID);
+labels = [];
+while ischar(line)
+    
+    [token, remain] = strtok(line);
+    [token, remain] = strtok(remain);
+    [token, remain] = strtok(remain);
+    [token, remain] = strtok(remain);
+    
+    remain = strtrim(remain);
+    token = strtok(remain, ' ,;'); 
+    token = strtrim(token);
+    labels = [labels, string(token)];
+    
+    line = fgetl(classesFID);
+end
+fclose(classesFID);
 
+%{
+for i = 1:numel(labels)
+   
+    mkdir(char(strcat('sampleData/', strcat('segmented_FCN/',labels(i)))));
+    
+end
+%}
 images = dir(fullfile(imagesFolder, '*.jpg'));
-for f = 1: numel(imagesFolder)
+
+for f = 1: numel(images)
     
     fileImage = fullfile(imagesFolder, images(f).name);
     filePred_Dilated = fullfile(predictionsFolder_Dilated, strrep(images(f).name, '.jpg', '.png'));
@@ -58,9 +83,9 @@ for f = 1: numel(imagesFolder)
         end
                
         %Salvo in memoria l'immagine con il nome del segmento
-        segmentName = fullfile(segmentedFolder_FCN, strcat(num2str(objects(obj)),images(f).name));
-        imwrite(segment, segmentName);
+        %segmentName = fullfile(segmentedFolder_FCN, strcat(labels(int8(objects(obj))),images(f).name));
+        %imwrite(segment, segmentName);
     end
     
 end
-    
+
