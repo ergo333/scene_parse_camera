@@ -29,6 +29,9 @@ while ischar(line)
 end
 fclose(classesFID);
 
+
+%% Creo le cartelle per ogni tipo 
+% Togleire il commento alla prima esecuzione
 %{
 for i = 1:numel(labels)
    
@@ -49,10 +52,11 @@ for f = 1: numel(images)
     imPred_FCN = imread(filePred_FCN);
     
     [rows, cols, pix] = size(im);
-   
+    
     %Array che contiene l'indice degli oggetti presenti nell'immagine
-    objects = zeros(1);
+    objects = zeros(1);   
    
+ 
     %% Controllo gli oggetti esistenti ed inserisco quelli nuovi in objects
     for i = 1:rows
         for j = 1:cols
@@ -61,15 +65,18 @@ for f = 1: numel(images)
             end
         end
     end
+   
+    objects = objects(2:end);
     [objRows, objCols] = size(objects);
-        
+     
     %% Creo una nuova immagine per ogni oggetto rilevato
+    
     for obj = 1:objCols
-       
+             
         %Creo una nuova immagine con le stesse dimensioni dell'immagine
         %originale e la imposto come nera
         segment = im;
-        
+
         %Ad ogni pixel dell'immagine che appartiene al segmento, assegno il
         %colore originale
         for i = 1:rows
@@ -81,11 +88,19 @@ for f = 1: numel(images)
                 end
             end
         end
-               
-        %Salvo in memoria l'immagine con il nome del segmento
-        %segmentName = fullfile(segmentedFolder_FCN, strcat(labels(int8(objects(obj))),images(f).name));
-        %imwrite(segment, segmentName);
+
+        %% Salvo in memoria l'immagine con il nome del segmento
+
+        %mettiamo il +1 perchè c'è lo 0 che da "fastidio" e non si può
+        %usare come indice
+
+        segmentName = fullfile(segmentedFolder_FCN, strcat(char(labels(objects(obj))),strcat('/', images(f).name)));
+
+        imwrite(segment, segmentName);
+       
+        
     end
+    
     
 end
 
